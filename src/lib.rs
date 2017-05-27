@@ -248,7 +248,7 @@ mod test {
 
     #[test]
     fn server() {
-        let ssl = NativeTlsServer::new("test/identity.p12", "mypass").unwrap();
+        let ssl = NativeTlsServer::new("test/server-localhost.pfx", "mypass").unwrap();
         let server = Server::https("127.0.0.1:0", ssl).unwrap();
 
         let listening = server.handle(|_: Request, resp: Response<Fresh>| {
@@ -257,9 +257,8 @@ mod test {
         let port = listening.socket.port();
         mem::forget(listening);
 
-
         let mut buf = Vec::new();
-        let _ = File::open("test/root-ca.der").unwrap().read_to_end(&mut buf).unwrap();
+        let _ = File::open("test/root.der").unwrap().read_to_end(&mut buf).unwrap();
         let cert = Certificate::from_der(&buf).unwrap();
 
         let mut tls_connector_builder = TlsConnector::builder().unwrap();
